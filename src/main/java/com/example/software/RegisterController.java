@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-class LoginRequest {
+class RegisterRequest {
     private String username;
     private String password;
 
     // 构造函数
-    public LoginRequest(String username, String password) {
+    public RegisterRequest(String username, String password) {
         this.username = username;
         this.password = password;
     }
@@ -28,10 +28,10 @@ class LoginRequest {
         return password;
     }
 }
-class LoginResponse {
+class RegisterResponse {
     private String flag;
 
-    LoginResponse() {}
+    RegisterResponse() {}
 
     void setFlag(String flag) {
         this.flag = flag;
@@ -39,21 +39,23 @@ class LoginResponse {
 }
 
 @RestController
-public class LoginController {
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        String username = loginRequest.getUsername();
-        String password = loginRequest.getPassword();
-        System.out.println("[Login]username: " + username);
-        System.out.println("[Login]password: " + password);
+public class RegisterController {
 
-        // 假设这里进行了登录验证
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setFlag("1");
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
+        String username = registerRequest.getUsername();
+        String password = registerRequest.getPassword();
+        System.out.println("[Register]username: " + username);
+        System.out.println("[Register]password: " + password);
+
+        // 假设这里处理注册逻辑
+
+        RegisterResponse registerResponse = new RegisterResponse();
+        registerResponse.setFlag("1");
 
         Gson gson = new Gson();
-        String jsonResponse = gson.toJson(loginResponse);
-        System.out.println("[Login]Response: " + jsonResponse);
+        String jsonResponse = gson.toJson(registerResponse);
+        System.out.println("[Register]Response: " + jsonResponse);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

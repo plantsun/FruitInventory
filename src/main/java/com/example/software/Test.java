@@ -1,17 +1,27 @@
 package com.example.software;
 
-import java.io.File;
-import java.util.UUID;
+import com.google.gson.Gson;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.highgui.HighGui;
+import org.opencv.imgcodecs.Imgcodecs;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Test {
     public static void main(String[] args) {
-        // 生成一个唯一的文件名
-        String uniqueFileName = UUID.randomUUID().toString() + "-" + "a.jpg";
-
-        // 设置保存路径
-        String savePath = "./image/";
-
-        // 确保目录存在
-        File saveDirectory = new File(savePath);
+//        Map<String, String> res = new HashMap<>();
+//        res.put("type", "苹果");
+//        res.put("quality", "high");
+//        ImageResponse imageResponse = new ImageResponse(res.get("type"), res.get("quality"));
+//        Gson gson = new Gson();
+//        String jsonResponse = gson.toJson(imageResponse);
+//        System.out.println(jsonResponse);
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//        Mat img = Imgcodecs.imread("E:\\study\\java\\software\\image\\21b7cf14-7844-4ce7-90d9-3ed0c012cff3-QQ图片20240605165258.jpg");
+        Mat img = Imgcodecs.imread("E:\\study\\java\\software\\image\\21b7cf14-7844-4ce7-90d9-3ed0c012cff3.jpg");
+        HighGui.imshow("test", img);
+        HighGui.waitKey(0);
     }
 }
