@@ -12,7 +12,7 @@ public class Warehouse {
     private String name;//仓库名
     private String telephone;//联系电话
     private String location;//位置
-//    private String password;//密码
+
 
     public Warehouse(String name, String telephone, String location) {
         this.name = name;

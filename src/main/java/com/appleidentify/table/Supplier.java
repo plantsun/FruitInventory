@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Supplier {
 
-    private Integer warehouseID;//供应商ID
+    private Integer supplierID;//供应商ID
     private String name;//供应商名
     private String telephone;//联系电话
     private String location;//位置

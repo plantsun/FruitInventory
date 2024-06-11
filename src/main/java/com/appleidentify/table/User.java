@@ -19,7 +19,7 @@ public class User {
         this.userName = userName;
         this.password = password;
         this.priority =0;
-        this.warehouseID = null;
+        this.warehouseID = 0;
     }
     /**
     * 检查用户名和密码是否合法

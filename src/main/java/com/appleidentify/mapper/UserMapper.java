@@ -57,7 +57,7 @@ public interface UserMapper {
      * @return
      */
     @Update("update user set username=#{userName}, password=#{password}, " +
-            "priority=#{priority}, warehouseID=#{warehouseID} where userID=#{y}")
+            "priority=#{priority}, warehouseID=#{warehouseID} where userID=#{userId}")
     public Integer update(User user);
 
 }

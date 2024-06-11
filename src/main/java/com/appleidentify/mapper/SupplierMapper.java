@@ -26,13 +26,19 @@ public interface SupplierMapper {
      * 查找是否已有供应商,通过供应商名
      */
     @Select("select * from supplier where name=#{name}")
-    public List<Supplier> existSupplierByName(String name);
+    public Supplier existSupplierByName(String name);
 
     /**
      * 查找是否已有供应商，通过供应商ID
      */
     @Select("select * from supplier where supplierID=#{supplierID}")
     public Supplier existSupplierByID(Integer supplierID);
+
+    /**
+     * 查找是否已有供应商，通过水果ID
+     */
+    @Select("select * from supplier where supplierID in (select supply.supplierID from supply where supply.fruitID=#{fruitID})")
+    public List<Supplier> existSupplierByFruitID(Integer fruitID);
 
 
     /**

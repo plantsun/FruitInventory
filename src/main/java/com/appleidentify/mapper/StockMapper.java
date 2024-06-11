@@ -37,13 +37,13 @@ public interface StockMapper {
      * 查找是否已有储存信息,通过fruitID和warehouseID和quality
      */
     @Select("select * from stock where fruitID=#{fruitID} and warehouseID=#{warehouseID} and quality=#{quality}")
-    public Stock existStockByFruitIDWarehouseIDQuality(Integer fruitID, Integer warehouseID, String quality);
+    public Stock existStockByFruitIDWarehouseIDQuality(@Param("fruitID") Integer fruitID, @Param("warehouseID") Integer warehouseID,@Param("quality") String quality);
 
     /**
      * 查找是否已有储存信息,通过fruitID和warehouseID
      */
     @Select("select * from stock where fruitID=#{fruitID} and warehouseID=#{warehouseID}")
-    public List<Stock> existStockByFruitIDWarehouseID(Integer fruitID, Integer warehouseID);
+    public List<Stock> existStockByFruitIDWarehouseID(@Param("fruitID") int fruitID, @Param("warehouseID") int warehouseID);
 
     /**
      * 查找是否已有储存信息,通过warehouseID
