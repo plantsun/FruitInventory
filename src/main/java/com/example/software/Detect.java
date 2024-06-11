@@ -1,6 +1,5 @@
 package com.example.software;
 
-import ai.djl.MalformedModelException;
 import ai.djl.Model;
 import ai.djl.inference.Predictor;
 import ai.djl.modality.cv.Image;
@@ -23,7 +22,6 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.highgui.HighGui;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.URLEncoder;
 

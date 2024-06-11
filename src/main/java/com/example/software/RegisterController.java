@@ -1,5 +1,6 @@
 package com.example.software;
 
+import com.example.software.database.serves.Business;
 import com.google.gson.Gson;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -48,10 +49,22 @@ public class RegisterController {
         System.out.println("[Register]username: " + username);
         System.out.println("[Register]password: " + password);
 
-        // 假设这里处理注册逻辑
-
         RegisterResponse registerResponse = new RegisterResponse();
-        registerResponse.setFlag("1");
+        // 注册逻辑
+        Business business = new Business();
+        String res = business.register(username, password);
+        if (res.equals("该用户名已存在"))
+        {
+            registerResponse.setFlag("2");
+        }
+        else if (res.equals("注册成功"))
+        {
+            registerResponse.setFlag("1");
+        }
+        else    // 注册失败
+        {
+            registerResponse.setFlag("0");
+        }
 
         Gson gson = new Gson();
         String jsonResponse = gson.toJson(registerResponse);
