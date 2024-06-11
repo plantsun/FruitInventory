@@ -21,6 +21,13 @@ public class User {
         this.priority =0;
         this.warehouseID = 0;
     }
+    public User(String userName, String password,Short priority, Integer warehouseID) {
+        this.userName = userName;
+        this.password = password;
+        this.priority =priority;
+        this.warehouseID =warehouseID;
+    }
+
     /**
     * 检查用户名和密码是否合法
     * */

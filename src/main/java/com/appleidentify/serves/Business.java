@@ -641,6 +641,47 @@ public class Business {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * 注册
+     * @param password
+     * @param username
+     * @return
+     */
+    @Transactional
+    public String addUser(String username, String password, String warehouseName, int priority){
+//        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
+        try {
+            int wid = warehouseMapper.existWarehouseByName(warehouseName).getWarehouseID();
+            user = new User(username, password, (short) priority, wid);
+            user.checkUser();//检查用户名和密码格式
+            //检查结果
+        /* ..return "用户名格式错误"
+             return "密码格式错误".. */
+
+            User existUser = userMapper.existUser(user);
+//            dataSourceTransactionManager.commit(transactionStatus); // 手动提交
+            if(existUser == null){
+                int flag = userMapper.register(user);
+                user = userMapper.existUser(user);
+                if(flag == 1){
+//                    dataSourceTransactionManager.commit(transactionStatus); // 手动提交
+                    return "注册成功";
+                }else {
+//                    dataSourceTransactionManager.rollback(transactionStatus); // 事务回滚
+                    return "注册失败";
+                }
+            }else {
+//               dataSourceTransactionManager.rollback(transactionStatus); // 事务回滚
+                return "该用户名已存在";
+            }
+
+        }catch (Exception e){
+//            dataSourceTransactionManager.rollback(transactionStatus); // 事务回滚
+            e.printStackTrace();
+            return ("异常——————————————————");
+        }
 
     }
 
