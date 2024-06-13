@@ -18,7 +18,7 @@ class Fruit {
     private int fruitId;
     private String class_;
     private String qualify;
-    private int warehouseId;
+    private String warehouseName;
     private int num;
 }
 
@@ -45,9 +45,9 @@ public class GetFruitInfoController {
             int fruitId = stock.getID();
             String class_ = stock.getFruitName();
             String quality = stock.getQuality();
-            int warehouseId = stock.getWarehouseID();
+            String warehouseName = stock.getWarehouseName();
             int num = stock.getNumber();
-            fruits.add(new Fruit(fruitId, class_, quality, warehouseId, num));
+            fruits.add(new Fruit(fruitId, class_, quality, warehouseName, num));
         }
         GetFruitInfoResponse response = new GetFruitInfoResponse(fruits);
 

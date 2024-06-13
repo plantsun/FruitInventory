@@ -362,7 +362,8 @@ public class Business {
             if(stockList != null){
                 for (Stock stock:stockList) {
                     String fruitName = fruitMapper.existFruitByID(stock.getFruitID()).getName();
-                    StockList stockList1 = new StockList(stock.getID(),fruitName,stock.getWarehouseID(),stock.getTime(),stock.getNumber(),stock.getQuality());
+                    String warehouseName = warehouseMapper.existWarehouseByID(stock.getWarehouseID()).getName();
+                    StockList stockList1 = new StockList(stock.getID(),fruitName,warehouseName,stock.getTime(),stock.getNumber(),stock.getQuality());
                     stockLists.add(stockList1);
                 }
 //                dataSourceTransactionManager.commit(transactionStatus); // 手动提交
@@ -416,7 +417,8 @@ public class Business {
             if(stockList != null){
                 for (Stock stock:stockList) {
                     String fruitName = fruitMapper.existFruitByID(stock.getFruitID()).getName();
-                    StockList stockList1 = new StockList(stock.getID(),fruitName,stock.getWarehouseID(),stock.getTime(),stock.getNumber(),stock.getQuality());
+                    String warehouseName = warehouseMapper.existWarehouseByID(stock.getWarehouseID()).getName();
+                    StockList stockList1 = new StockList(stock.getID(),fruitName,warehouseName,stock.getTime(),stock.getNumber(),stock.getQuality());
                     stockLists.add(stockList1);
                 }
 //                dataSourceTransactionManager.commit(transactionStatus); // 手动提交

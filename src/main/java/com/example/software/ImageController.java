@@ -86,10 +86,12 @@ public class ImageController {
             File saveDirectory = new File(savePath);
             if (!saveDirectory.exists())
             {
+                System.out.println("目录不存在，正在创建目录...");
                 if (!saveDirectory.mkdirs())
                 {
                     throw new IOException("Failed to create directory");
                 }
+                System.out.println("目录创建成功!");
             }
 
             // 创建目标文件对象
