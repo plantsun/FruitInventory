@@ -2,6 +2,7 @@ package com.example.software;
 
 import com.example.software.database.serves.Business;
 import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,7 +32,8 @@ class LoginRequest {
 }
 class LoginResponse {
     private String flag;
-    private int userId;
+    private int userId = -1;
+    String isManager = "";
 
     LoginResponse() {}
 
@@ -42,10 +44,16 @@ class LoginResponse {
     {
         this.userId = userId;
     }
+    void setIsManage(String isManager) {
+        this.isManager = isManager;
+    }
 }
 
 @RestController
 public class LoginController {
+    @Autowired
+    private Business business;
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         String username = loginRequest.getUsername();
@@ -55,27 +63,32 @@ public class LoginController {
 
         LoginResponse loginResponse = new LoginResponse();
         // 登录验证
-        if (!InformationBuffer.checkUser(username)) // 用户已登录
+        if (/*!InformationBuffer.checkUser(username)*/false) // 用户已登录
         {
             loginResponse.setFlag("3");
         }
         else
         {
-            Business business = new Business();
             String res = business.login(username, password);
 
             if (res.equals("用户不存在"))
             {
+                System.out.println("[Login]: " + res);
                 loginResponse.setFlag("2");
             }
             else if (res.equals("登录成功"))
             {
+                System.out.println("[Login]: " + res);
                 loginResponse.setFlag("1");
                 loginResponse.setUserId(business.getUser().getUserId());
-                InformationBuffer.addBusiness(business);
+                String isManager = business.getUser().getPriority() == 1 ? "yes" : "no";
+                loginResponse.setIsManage(isManager);
+                if (InformationBuffer.checkUser(username))  // 用户未登录过
+                    InformationBuffer.addBusiness(business);
             }
             else    // 密码错误
             {
+                System.out.println("[Login]: " + res);
                 loginResponse.setFlag("0");
             }
         }

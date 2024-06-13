@@ -11,7 +11,7 @@ public class User {
     private Integer userId;//用户ID
     private String userName;//用户名
     private String password;//密码
-    private Short priority;//权限 0为管理员， 1为普通用户
+    private Short priority;//权限 1为管理员， 0为普通用户
     private Integer warehouseID;//所属仓库ID
 
 

@@ -2,6 +2,7 @@ package com.example.software;
 
 import com.example.software.database.serves.Business;
 import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,6 +42,8 @@ class RegisterResponse {
 
 @RestController
 public class RegisterController {
+    @Autowired
+    private Business business;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
@@ -51,18 +54,20 @@ public class RegisterController {
 
         RegisterResponse registerResponse = new RegisterResponse();
         // 注册逻辑
-        Business business = new Business();
         String res = business.register(username, password);
         if (res.equals("该用户名已存在"))
         {
+            System.out.println("[Register]: " + res);
             registerResponse.setFlag("2");
         }
         else if (res.equals("注册成功"))
         {
+            System.out.println("[Register]: " + res);
             registerResponse.setFlag("1");
         }
         else    // 注册失败
         {
+            System.out.println("[Register]: " + res);
             registerResponse.setFlag("0");
         }
 

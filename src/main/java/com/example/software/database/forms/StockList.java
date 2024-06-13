@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class StockList {
     private Integer ID;//储存ID
     private String fruitName;//水果名

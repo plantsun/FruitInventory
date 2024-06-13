@@ -6,7 +6,9 @@ import org.opencv.core.Mat;
 import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Test {
@@ -23,5 +25,9 @@ public class Test {
         Mat img = Imgcodecs.imread("E:\\study\\java\\software\\image\\apple.jpg");
         HighGui.imshow("test", img);
         HighGui.waitKey(0);
+
+        List<List<Integer>> listList = new ArrayList<>();
+        listList.add(null);
+        listList.add(null);
     }
 }

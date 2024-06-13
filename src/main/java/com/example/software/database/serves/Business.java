@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -68,17 +69,17 @@ public class Business {
     public String register(String username, String password){
 //        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
         try {
-            user = new User(username, password);
-            user.checkUser();//检查用户名和密码格式
+            User user0 = new User(username, password);
+            user0.checkUser();//检查用户名和密码格式
             //检查结果
         /* ..return "用户名格式错误"
              return "密码格式错误".. */
 
-            User existUser = userMapper.existUser(user);
+            User existUser = userMapper.existUser(user0);
 //            dataSourceTransactionManager.commit(transactionStatus); // 手动提交
             if(existUser == null){
-                int flag = userMapper.register(user);
-                user = userMapper.existUser(user);
+                int flag = userMapper.register(user0);
+//                user = userMapper.existUser(user);
                 if(flag == 1){
 //                    dataSourceTransactionManager.commit(transactionStatus); // 手动提交
                     return "注册成功";
@@ -162,6 +163,22 @@ public class Business {
     }
 
     /**
+     * 库存预警
+     * @param lowLimit
+     * @param highLimit
+     * @return
+     */
+    @Transactional
+    public List<List<Integer>> checkStockByLimit(int lowLimit, int highLimit){
+        List<Integer> low = stockMapper.checkStockLow(lowLimit);
+        List<Integer> high = stockMapper.checkStockHigh(highLimit);
+        List<List<Integer>> result = new ArrayList<>();
+        result.add(low);
+        result.add(high);
+        return result;
+    }
+
+    /**
      * 水果入库
      * @param fruitName
      * @param warehouseName
@@ -226,39 +243,34 @@ public class Business {
 
     /**
      * 水果出库
-     * @param fruitName
-     * @param warehouseName
-     * @param time
      * @param number
-     * @param quality
      * @return
      */
     @Transactional
-    public String[] outStorage(String fruitName, String warehouseName, Timestamp time, int number, String quality){
+    public String outStorage(int ID, int number){
 //        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
-        String[] results = new String[2];
+        String results;
         try {
-            Fruit fruit = fruitMapper.existFruitByName(fruitName);
-            if(fruit == null) return new String[]{"该水果不存在","该水果不存在"};
-            int fruitID = fruit.getFruitID();
-            Warehouse warehouse = warehouseMapper.existWarehouseByName(warehouseName);
-            if(warehouse == null) return new String[]{"该仓库不存在","该仓库不存在"};
-            int warehouseID = warehouse.getWarehouseID();
             int userID = user.getUserId();
             Short isIn = 0;
-            Record newRecord = new Record(fruitID, warehouseID, userID, time, number, isIn, quality);
-            Stock stock = stockMapper.existStockByFruitIDWarehouseIDQuality(fruitID,warehouseID,quality);
+            Timestamp time = new Timestamp((new Date()).getTime());
+            Stock stock = stockMapper.existStockByID(ID);
+            Record newRecord = new Record(stock.getFruitID(), stock.getWarehouseID(), userID, time, number, isIn, stock.getQuality());
             int flag1 = 0;
             if(stock ==null){
 //                dataSourceTransactionManager.rollback(transactionStatus); // 事务回滚
-                results[0] = "出库失败该水果库存不存在";
-                results[1] = checkStock(fruitName,warehouseName,lowLimit,highLimit);
+                results = "出库失败该水果库存不存在";
+//                results[1] = checkStock(fruitMapper.existFruitByID(stock.getFruitID()).getName(),
+//                        warehouseMapper.existWarehouseByID(stock.getWarehouseID()).getName(),lowLimit,highLimit);
                 return results;
             }else if(stock.getNumber() < number){
 //                dataSourceTransactionManager.rollback(transactionStatus); // 事务回滚
-                results[0] = "出库失败库存小于出库数量";
-                results[1] = checkStock(fruitName,warehouseName,lowLimit,highLimit);
+                results = "出库失败库存小于出库数量";
+//                results[1] = checkStock(fruitMapper.existFruitByID(stock.getFruitID()).getName(),
+//                        warehouseMapper.existWarehouseByID(stock.getWarehouseID()).getName(),lowLimit,highLimit);
                 return results;
+            }else if(stock.getNumber() == number){
+                flag1 = stockMapper.delete(stock.getID());
             }else {
                 stock.setNumber(stock.getNumber()-number);
                 stock.setTime(time);
@@ -268,29 +280,71 @@ public class Business {
                 int flag2 = recordMapper.register(newRecord);
                 if(flag2 == 1){
                     //                dataSourceTransactionManager.commit(transactionStatus); // 手动提交
-                    results[0] = "出库成功";
-                    results[1] = checkStock(fruitName,warehouseName,lowLimit,highLimit);
+                    results = "出库成功";
+//                    results[1] = checkStock(fruitMapper.existFruitByID(stock.getFruitID()).getName(),
+//                            warehouseMapper.existWarehouseByID(stock.getWarehouseID()).getName(),lowLimit,highLimit);
                     return results;
                 }else{
                     //                dataSourceTransactionManager.commit(transactionStatus); // 手动提交
-                    results[0] = "出库成功但记录失败";
-                    results[1] = checkStock(fruitName,warehouseName,lowLimit,highLimit);
+                    results = "出库成功但记录失败";
+//                    results[1] = checkStock(fruitMapper.existFruitByID(stock.getFruitID()).getName(),
+//                            warehouseMapper.existWarehouseByID(stock.getWarehouseID()).getName(),lowLimit,highLimit);
                     return results;
                 }
 
             }else {
 //                dataSourceTransactionManager.rollback(transactionStatus); // 事务回滚
-                results[0] = "出库失败";
-                results[1] = checkStock(fruitName,warehouseName,lowLimit,highLimit);
+                results = "出库失败";
+//                results = checkStock(fruitMapper.existFruitByID(stock.getFruitID()).getName(),
+//                        warehouseMapper.existWarehouseByID(stock.getWarehouseID()).getName(),lowLimit,highLimit);
                 return results;
             }
 
         }catch (Exception e){
 //            dataSourceTransactionManager.rollback(transactionStatus); // 事务回滚
             e.printStackTrace();
-            results[0] = "异常——————————————————";
-            results[1] = checkStock(fruitName,warehouseName,lowLimit,highLimit);
+            results = "异常——————————————————";
+//            results[1] = "异常";
             return results;
+        }
+    }
+
+    /**
+     * 修改储存信息
+     * @param ID
+     * @param fruitName
+     * @param quality
+     * @return
+     */
+    public String updateStock(int ID, String fruitName, String quality){
+        Fruit fruit = fruitMapper.existFruitByName(fruitName);
+        if (fruit == null){
+            return "该水果不存在";
+        }
+        Stock stock = stockMapper.existStockByID(ID);
+        if (stock == null){
+            return "该存储信息不存在";
+        }
+        stock.setFruitID(fruit.getFruitID());
+        stock.setQuality(quality);
+        stock.setTime(new Timestamp((new Date()).getTime()));
+        Stock exist = stockMapper.existStockByFruitIDWarehouseIDQuality(stock.getFruitID(),stock.getWarehouseID(),stock.getQuality());
+        int flag1 = 0;
+        int flag2 = 0;
+        if (exist == null){
+            flag1 = stockMapper.update(stock);
+            flag2 = 1;
+        }else {
+            exist.setTime(stock.getTime());
+            exist.setNumber(stock.getNumber()+exist.getNumber());
+            flag1 = stockMapper.update(exist);
+            flag2 = stockMapper.delete(ID);
+        }
+
+        if(flag1 == 1 && flag2 == 1){
+            return "存储信息修改成功";
+        }else {
+            return "存储信息修改失败";
         }
     }
 
@@ -427,7 +481,7 @@ public class Business {
         try {
             Supplier supplier = new Supplier(name,telephone,location);
             int flag = supplierMapper.register(supplier);
-            if(flag != 1){
+            if(flag == 1){
 //                dataSourceTransactionManager.commit(transactionStatus); // 手动提交
                 return "添加供应商成功";
             }else {
@@ -482,7 +536,7 @@ public class Business {
             supplier.setTelephone(telephone);
             supplier.setLocation(location);
             int flag = supplierMapper.update(supplier);
-            if(flag != 1){
+            if(flag == 1){
 //                dataSourceTransactionManager.commit(transactionStatus); // 手动提交
                 return "更新供应商成功";
             }else {
@@ -649,18 +703,18 @@ public class Business {
     public String addUser(String username, String password, String warehouseName, int priority){
 //        TransactionStatus transactionStatus = dataSourceTransactionManager.getTransaction(transactionDefinition);
         try {
-            int wid = warehouseMapper.existWarehouseByName(warehouseName).getWarehouseID();
-            user = new User(username, password, (short) priority, wid);
-            user.checkUser();//检查用户名和密码格式
+            int wid = 0/*warehouseMapper.existWarehouseByName(warehouseName).getWarehouseID()*/;
+            User user0 = new User(username, password, (short) priority, wid);
+            user0.checkUser();//检查用户名和密码格式
             //检查结果
         /* ..return "用户名格式错误"
              return "密码格式错误".. */
 
-            User existUser = userMapper.existUser(user);
+            User existUser = userMapper.existUser(user0);
 //            dataSourceTransactionManager.commit(transactionStatus); // 手动提交
             if(existUser == null){
-                int flag = userMapper.register(user);
-                user = userMapper.existUser(user);
+                int flag = userMapper.register(user0);
+//                user = userMapper.existUser(user);
                 if(flag == 1){
 //                    dataSourceTransactionManager.commit(transactionStatus); // 手动提交
                     return "注册成功";

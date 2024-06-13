@@ -71,4 +71,20 @@ public interface StockMapper {
     @Update("update stock set fruitID=#{fruitID}, warehouseID=#{warehouseID}, time=#{time}," +
             " number=#{number}, quality=#{quality} where ID=#{ID}")
     public Integer update(Stock stock);
+
+    /**
+     * 查找低于阈值的库存ID列表
+     * @param lowLimit
+     * @return
+     */
+    @Select("select ID from stock,(select warehouseID as t1, fruitID as t2 from stock  group by warehouseID,fruitID having SUM(number)<#{lowLimit}) as t where warehouseID = t.t1 and fruitID = t.t2 ")
+    public List<Integer> checkStockLow(@Param("lowLimit") Integer lowLimit);
+
+    /**
+     * 查找高于阈值的库存ID列表
+     * @param highLimit
+     * @return
+     */
+    @Select("select ID from stock,(select warehouseID as t1, fruitID as t2 from stock  group by warehouseID,fruitID having SUM(number)>#{highLimit}) as t where warehouseID = t.t1 and fruitID = t.t2 ")
+    public List<Integer> checkStockHigh(@Param("highLimit") Integer highLimit);
 }
